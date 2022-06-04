@@ -84,7 +84,7 @@ onMounted(async () => {
   initPie();
   initLine();
 });
-// 地图初始化
+// 地图
 const initCharts = () => {
   // 拿到中国的城市数据
   const city = store.list.diseaseh5Shelf.areaTree[0].children;
@@ -100,8 +100,9 @@ const initCharts = () => {
   });
   const charts = echarts.init(document.querySelector("#china") as HTMLElement);
   charts.resize({
-    width:800,
-  })
+    width: 800,
+    height: 720,
+  });
   // 配置项
   charts.setOption({
     geo: {
@@ -266,14 +267,21 @@ const initLine = () => {
   const charts = echarts.init(
     document.querySelector(".box-left-line") as HTMLElement
   );
+  charts.resize({
+    width: 350,
+    height: 185,
+  });
   charts.setOption({
     title: {
-      text:'新增确诊前十城市',
-      left:'center',
-      textStyle:{
-        color:'#fff',
-        lineHeight: 52,
+      text: "新增确诊前十城市",
+      left: "center",
+      textStyle: {
+        color: "#fff",
+        lineHeight: 50,
       },
+    },
+    grid: {
+      y2: 35,
     },
     backgroundColor: "#223651",
     tooltip: {
@@ -316,13 +324,12 @@ const initLine = () => {
 html,
 body,
 #app {
-  height: 100%;
+  background-color: #ccc;
+  background-size: cover;
 }
 .box {
-  height: 100%;
   display: flex;
-  overflow: hidden;
-  background-color: #ccc;
+  height: 100%;
   &-left {
     width: 350px;
     color: white;
@@ -341,10 +348,7 @@ body,
         padding: 3px 0;
       }
     }
-
     &-line {
-      width: 350px;
-      height: 30vh;
       margin-top: 15px;
     }
 
@@ -368,7 +372,6 @@ body,
       }
     }
   }
-
   &-right {
     width: 380px;
     .table {
