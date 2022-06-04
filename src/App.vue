@@ -41,7 +41,7 @@
     </div>
     <div id="china" class="box-center"></div>
     <div class="box-right">
-      <table class="table" cellspacing="0" >
+      <table class="table" cellspacing="0">
         <thead>
           <tr>
             <th>地区</th>
@@ -77,7 +77,6 @@ import { geoCoordMap } from "./assets/geoMap"; // 经纬度
 import "animate.css";
 
 const store = useStore();
-
 onMounted(async () => {
   await store.getList();
   // ecahrts 要在 onMunted 里调用，但是不应该在里面写逻辑，可以直接调用方法
@@ -100,7 +99,9 @@ const initCharts = () => {
     };
   });
   const charts = echarts.init(document.querySelector("#china") as HTMLElement);
-
+  charts.resize({
+    width:800,
+  })
   // 配置项
   charts.setOption({
     geo: {
@@ -227,9 +228,6 @@ const initPie = () => {
     width: 350,
     height: 230,
   });
-  window.onresize = () => {
-    charts.resize();
-  };
   charts.setOption({
     backgroundColor: "#223651",
     tooltip: {
@@ -269,6 +267,14 @@ const initLine = () => {
     document.querySelector(".box-left-line") as HTMLElement
   );
   charts.setOption({
+    title: {
+      text:'新增确诊前十城市',
+      left:'center',
+      textStyle:{
+        color:'#fff',
+        lineHeight: 52,
+      },
+    },
     backgroundColor: "#223651",
     tooltip: {
       trigger: "axis",
@@ -322,15 +328,16 @@ body,
     color: white;
     .box-pie {
       display: flex;
-      flex-direction:column;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       background-color: @itemBg;
       width: 350px;
       height: 280px;
       margin-top: 15px;
-      .title{
-        font-weight:900;
+      .title {
+        font-size: 18px;
+        font-weight: 900;
         padding: 3px 0;
       }
     }
@@ -361,9 +368,6 @@ body,
       }
     }
   }
-  &-center {
-    flex: 1;
-  }
 
   &-right {
     width: 380px;
@@ -375,11 +379,13 @@ body,
         th {
           padding: 5px;
           white-space: nowrap;
+          border: 0.5px solid rgba(127, 125, 125, 0.468);
         }
         td {
           padding: 3px 5px;
           width: 100%;
           white-space: nowrap;
+          border: 0.5px solid rgba(127, 125, 125, 0.468);
         }
       }
     }
