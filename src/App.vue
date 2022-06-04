@@ -69,13 +69,19 @@
 </template>
 
 <script setup lang="ts">
+import type { Children } from "./stores/type";
 import { useStore } from "./stores";
 import { onMounted } from "vue";
 import * as echarts from "echarts"; // 将所有API都导出到一个对象中
 import "./assets/china.js"; // 地图
 import { geoCoordMap } from "./assets/geoMap"; // 经纬度
 import "animate.css";
-
+interface data {
+  name: string;
+  value: string;
+  children: object;
+  selected?: boolean;
+}
 const store = useStore();
 onMounted(async () => {
   await store.getList();
@@ -84,20 +90,23 @@ onMounted(async () => {
   initPie();
   initLine();
 });
+
 // 地图
 const initCharts = () => {
   // 拿到中国的城市数据
   const city = store.list.diseaseh5Shelf.areaTree[0].children;
   // 初始化数据 默认为广东
   store.item = city[9].children;
-  // 遍历每个城市的数据
   const data = city.map((v) => {
     return {
       name: v.name,
       value: geoCoordMap[v.name].concat(v.total.nowConfirm), // concat 连接字符串
       children: v.children,
+      selected: false,
     };
   });
+  data[9].selected = true;
+
   const charts = echarts.init(document.querySelector("#china") as HTMLElement);
   charts.resize({
     width: 800,
@@ -137,20 +146,17 @@ const initCharts = () => {
       emphasis: {
         areaColor: "#0f5d9d",
       },
-
       regions: [
         {
           name: "南海诸岛",
           itemStyle: {
             areaColor: "rgba(0, 10, 52, 1)",
             borderColor: "rgba(0, 10, 52, 1)",
-            // normal: {
             opacity: 0,
             label: {
               show: false,
               color: "#009cc9",
             },
-            // },
           },
           label: {
             show: false,
@@ -165,12 +171,10 @@ const initCharts = () => {
         type: "map",
         map: "china",
         aspectScale: 0.8,
-        layoutCenter: ["50%", "50%"], //地图位置
+        layoutCenter: ["50%", "50%"],
         layoutSize: "100%",
-        zoom: 1, //当前视角的缩放比例
-        // roam: true, //是否开启平游或缩放
+        zoom: 1,
         scaleLimit: {
-          //滚轮缩放的极限控制
           min: 1,
           max: 2,
         },
@@ -190,24 +194,6 @@ const initCharts = () => {
             show: true,
             color: "#fff",
           },
-        },
-        data: data,
-      },
-      {
-        type: "scatter",
-        coordinateSystem: "geo",
-        symbol: "pin",
-        symbolSize: [45, 45],
-        label: {
-          show: true,
-          color: "#fff",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          formatter(value: any) {
-            return value.data.value[2];
-          },
-        },
-        itemStyle: {
-          color: "#1E90FF", //标志颜色
         },
         data: data,
       },
