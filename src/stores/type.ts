@@ -64,7 +64,7 @@ export interface Total {
 }
 
 export interface Today {
-	wzz_add: string;
+	wzz_add: number;
 	local_confirm_add: number;
 	confirm: number;
 	confirmCuts: number;
