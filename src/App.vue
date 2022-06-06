@@ -35,11 +35,15 @@
       </div>
       <div class="box-pie">
         <p class="title">新增确诊前十城市</p>
-        <div class="box-left-pie"></div>
+        <div class="box-left-pie" style="width: 350px; height: 230px"></div>
       </div>
-      <div class="box-left-line"></div>
+      <div class="box-left-line" style="width: 350px; height: 185px"></div>
     </div>
-    <div id="china" class="box-center"></div>
+    <div
+      id="china"
+      class="box-center"
+      style="width: 800px; height: 720px"
+    ></div>
     <div class="box-right">
       <table class="table" cellspacing="0">
         <thead>
@@ -101,12 +105,11 @@ const initCharts = () => {
   // 默认选中广东
   data[9].selected = true;
   const charts = echarts.init(document.querySelector("#china") as HTMLElement);
-  charts.resize({
-    width: 800,
-    height: 720,
-  });
   // 配置项
   charts.setOption({
+    title: {
+      x: "center",
+    },
     geo: {
       map: "china",
       aspectScale: 0.8,
@@ -188,7 +191,7 @@ const initCharts = () => {
           "rgb(230,69,70)",
           "rgb(240,65,65)",
         ],
-        symbolSize: [60, 200],
+        symbolSize: [60, 100],
       },
     },
     series: [
@@ -202,7 +205,7 @@ const initCharts = () => {
         label: {
           show: true,
           color: "#000",
-          fontSize: 16,
+          fontSize: 12,
         },
         emphasis: {
           areaColor: "#56b1da",
@@ -227,10 +230,6 @@ const initPie = () => {
   const charts = echarts.init(
     document.querySelector(".box-left-pie") as HTMLElement
   );
-  charts.resize({
-    width: 350,
-    height: 230,
-  });
   charts.setOption({
     backgroundColor: "#223651",
     tooltip: {
@@ -269,10 +268,6 @@ const initLine = () => {
   const charts = echarts.init(
     document.querySelector(".box-left-line") as HTMLElement
   );
-  charts.resize({
-    width: 350,
-    height: 185,
-  });
   charts.setOption({
     title: {
       text: "新增确诊前十城市",
@@ -326,9 +321,10 @@ const initLine = () => {
 html,
 body,
 #app {
-  width:100%;
+  width: 100vw;
   background-color: #ccc;
 }
+
 .box {
   display: flex;
   height: 100%;
@@ -336,25 +332,6 @@ body,
   &-left {
     width: 350px;
     color: white;
-    .box-pie {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      background-color: @itemBg;
-      width: 350px;
-      height: 280px;
-      margin-top: 15px;
-      .title {
-        font-size: 18px;
-        font-weight: 900;
-        padding: 3px 0;
-      }
-    }
-    &-line {
-      margin-top: 15px;
-    }
-
     &-crad {
       display: grid;
       grid-template-columns: auto auto auto; //列 几列就写几个auto
@@ -374,7 +351,26 @@ body,
         }
       }
     }
+    .box-pie {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      background-color: @itemBg;
+      width: 350px;
+      height: 280px;
+      margin-top: 15px;
+      .title {
+        font-size: 18px;
+        font-weight: 900;
+        padding: 3px 0;
+      }
+    }
+    &-line {
+      margin-top: 15px;
+    }
   }
+
   &-right {
     width: 380px;
     margin-right: 13px;
@@ -395,6 +391,46 @@ body,
           border: 0.5px solid rgba(127, 125, 125, 0.468);
         }
       }
+    }
+  }
+}
+
+@media (max-width: 1000px) {
+  @width: 95vw;
+  * {
+    margin-right: 0 !important;
+  }
+  .box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    &-left {
+      width: @width !important;
+      &-crad {
+        width: @width !important;
+      }
+      &-line {
+        width: @width !important;
+        height: 30vh !important;
+      }
+      .box-pie {
+        width: @width !important;
+        height: 32vh !important;
+      }
+      .box-left-pie {
+        width: @width !important;
+        height: 32vh !important;
+      }
+    }
+    &-center {
+      width: @width !important;
+      height: 75vh !important;
+      font-size: 10vw !important;
+    }
+    &-right {
+      width: @width !important;
+      font-size: 4vw;
     }
   }
 }
