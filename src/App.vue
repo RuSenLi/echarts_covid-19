@@ -326,13 +326,13 @@ const initLine = () => {
 html,
 body,
 #app {
-  background-color: rgba(220, 217, 217, 0.636);
-  background-size: cover;
+  width:100%;
+  background-color: #ccc;
 }
 .box {
   display: flex;
   height: 100%;
-  overflow: hidden;
+  background-size: cover;
   &-left {
     width: 350px;
     color: white;
@@ -377,6 +377,7 @@ body,
   }
   &-right {
     width: 380px;
+    margin-right: 13px;
     .table {
       width: 100%;
       color: white;
