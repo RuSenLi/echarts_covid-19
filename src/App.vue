@@ -83,13 +83,13 @@ onMounted(async () => {
   initPie();
   initLine();
 });
+
 // 地图
 const initCharts = () => {
   // 拿到中国的城市数据
   const city = store.list.diseaseh5Shelf.areaTree[0].children;
   // 初始化数据 默认为广东
   store.item = city[9].children;
-  // 遍历每个城市的数据
   const data = city.map((v) => {
     return {
       name: v.name,
@@ -139,7 +139,6 @@ const initCharts = () => {
       emphasis: {
         areaColor: "#0f5d9d",
       },
-
       regions: [
         {
           name: "南海诸岛",
@@ -165,7 +164,6 @@ const initCharts = () => {
       trigger: "item",
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       formatter(value: any) {
-        console.log(value.data.value[2]);
         return "现有确诊: " + value.data.value[2].toString();
       },
       data: data,
@@ -198,9 +196,8 @@ const initCharts = () => {
         type: "map",
         map: "china",
         aspectScale: 0.8,
-        layoutCenter: ["50%", "50%"], //地图位置
+        layoutCenter: ["50%", "50%"],
         layoutSize: "100%",
-        zoom: 1, //当前视角的缩放比例
         // 省份标题
         label: {
           show: true,
@@ -216,25 +213,6 @@ const initCharts = () => {
         },
         data: data,
       },
-      // {
-      //   type: "scatter",
-      //   coordinateSystem: "geo",
-      //   symbol: "pin",
-      //   symbolSize: [45, 45],
-      //   label: {
-      //     show: true,
-      //     color: "#fff",
-      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      //     formatter(value: any) {
-      //       // console.log(value.data.value[2]);
-      //       return value.data.value[2];
-      //     },
-      //   },
-      //   itemStyle: {
-      //     color: "#1E90FF", //标志颜色
-      //   },
-      //   data: data,
-      // },
     ],
   });
 
@@ -354,6 +332,7 @@ body,
 .box {
   display: flex;
   height: 100%;
+  overflow: hidden;
   &-left {
     width: 350px;
     color: white;
