@@ -39,6 +39,7 @@
       </div>
       <div class="box-left-line"></div>
     </div>
+    <!-- <div class="col"></div> -->
     <div id="china" class="box-center"></div>
     <div class="box-right">
       <table class="table" cellspacing="0">
@@ -147,13 +148,11 @@ const initCharts = () => {
           itemStyle: {
             areaColor: "rgba(0, 10, 52, 1)",
             borderColor: "rgba(0, 10, 52, 1)",
-            // normal: {
             opacity: 0,
             label: {
               show: false,
               color: "#009cc9",
             },
-            // },
           },
           label: {
             show: false,
@@ -163,6 +162,22 @@ const initCharts = () => {
         },
       ],
     },
+    visualMap: {
+      min: 0,
+      max: 1000,
+      text: ["1000人以上", "0人"],
+      realtime: false,
+      calculable: true,
+      inRange: {
+        color: [
+          "rgb(192, 213, 228)",
+          "rgb(255,170,120)",
+          "rgb(255,130,100)",
+          "rgb(255,100,79)",
+          "rgb(240,65,65)",
+        ],
+      },
+    },
     series: [
       {
         type: "map",
@@ -171,23 +186,11 @@ const initCharts = () => {
         layoutCenter: ["50%", "50%"], //地图位置
         layoutSize: "100%",
         zoom: 1, //当前视角的缩放比例
-        // roam: true, //是否开启平游或缩放
-        scaleLimit: {
-          //滚轮缩放的极限控制
-          min: 1,
-          max: 2,
-        },
         // 省份标题
         label: {
           show: true,
-          color: "#FFFFFF",
+          color: "#000",
           fontSize: 16,
-        },
-        // 地图背景色
-        itemStyle: {
-          areaColor: "#0c3653",
-          borderColor: "#1cccff",
-          borderWidth: 1.8,
         },
         emphasis: {
           areaColor: "#56b1da",
@@ -195,24 +198,6 @@ const initCharts = () => {
             show: true,
             color: "#fff",
           },
-        },
-        data: data,
-      },
-      {
-        type: "scatter",
-        coordinateSystem: "geo",
-        symbol: "pin",
-        symbolSize: [45, 45],
-        label: {
-          show: true,
-          color: "#fff",
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          formatter(value: any) {
-            return value.data.value[2];
-          },
-        },
-        itemStyle: {
-          color: "#1E90FF", //标志颜色
         },
         data: data,
       },
@@ -319,6 +304,11 @@ const initLine = () => {
 </script>
 
 <style lang="less">
+.col {
+  width: 200px;
+  height: 200px;
+  background-color: rgb(230, 59, 59) ;
+}
 * {
   padding: 0;
   margin: 0;
@@ -329,7 +319,7 @@ const initLine = () => {
 html,
 body,
 #app {
-  background-color: #ccc;
+  background-color: rgba(220, 217, 217, 0.636);
   background-size: cover;
 }
 .box {
