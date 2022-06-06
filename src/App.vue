@@ -39,7 +39,6 @@
       </div>
       <div class="box-left-line"></div>
     </div>
-    <!-- <div class="col"></div> -->
     <div id="china" class="box-center"></div>
     <div class="box-right">
       <table class="table" cellspacing="0">
@@ -80,7 +79,6 @@ import "animate.css";
 const store = useStore();
 onMounted(async () => {
   await store.getList();
-  // ecahrts 要在 onMunted 里调用，但是不应该在里面写逻辑，可以直接调用方法
   initCharts();
   initPie();
   initLine();
@@ -162,6 +160,17 @@ const initCharts = () => {
         },
       ],
     },
+    //悬浮提示信息
+    tooltip: {
+      trigger: "item",
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      formatter(value: any) {
+        console.log(value.data.value[2]);
+        return "现有确诊: " + value.data.value[2].toString();
+      },
+      data: data,
+    },
+    //分布情况颜色
     visualMap: {
       min: 0,
       max: 1000,
@@ -171,11 +180,17 @@ const initCharts = () => {
       inRange: {
         color: [
           "rgb(192, 213, 228)",
-          "rgb(255,170,120)",
-          "rgb(255,130,100)",
-          "rgb(255,100,79)",
+          "rgb(255,130,140)",
+          "rgb(255,120,125)",
+          "rgb(255,90,95)",
+          "rgb(255,85,90)",
+          "rgb(255,80,85)",
+          "rgb(250,85,90)",
+          "rgb(245,75,85)",
+          "rgb(230,69,70)",
           "rgb(240,65,65)",
         ],
+        symbolSize: [60, 200],
       },
     },
     series: [
@@ -201,6 +216,25 @@ const initCharts = () => {
         },
         data: data,
       },
+      // {
+      //   type: "scatter",
+      //   coordinateSystem: "geo",
+      //   symbol: "pin",
+      //   symbolSize: [45, 45],
+      //   label: {
+      //     show: true,
+      //     color: "#fff",
+      //     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      //     formatter(value: any) {
+      //       // console.log(value.data.value[2]);
+      //       return value.data.value[2];
+      //     },
+      //   },
+      //   itemStyle: {
+      //     color: "#1E90FF", //标志颜色
+      //   },
+      //   data: data,
+      // },
     ],
   });
 
@@ -304,11 +338,6 @@ const initLine = () => {
 </script>
 
 <style lang="less">
-.col {
-  width: 200px;
-  height: 200px;
-  background-color: rgb(230, 59, 59) ;
-}
 * {
   padding: 0;
   margin: 0;
