@@ -96,8 +96,11 @@ const initCharts = () => {
       name: v.name,
       value: geoCoordMap[v.name].concat(v.total.nowConfirm), // concat 连接字符串
       children: v.children,
+      selected: false,
     };
   });
+  // 默认选中广东
+  data[9].selected = true;
   const charts = echarts.init(document.querySelector("#china") as HTMLElement);
   charts.resize({
     width: 800,
@@ -174,11 +177,13 @@ const initCharts = () => {
           min: 1,
           max: 2,
         },
+        // 省份标题
         label: {
           show: true,
           color: "#FFFFFF",
           fontSize: 16,
         },
+        // 地图背景色
         itemStyle: {
           areaColor: "#0c3653",
           borderColor: "#1cccff",
