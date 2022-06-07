@@ -554,6 +554,9 @@ html {
     &-right {
       margin-bottom: 40rem !important;
       width: @width !important;
+      table{
+        border-radius: 15rem !important;
+      }
       th {
         font-size: 37rem !important;
       }
