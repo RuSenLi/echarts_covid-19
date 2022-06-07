@@ -1,5 +1,13 @@
 <template>
   <div class="box">
+    <div class="header" v-if="width < 992">
+      <p class="header-title">国内疫情</p>
+      <div class="header-center">
+        <h3>新型冠状病毒肺炎</h3>
+        <h2>疫情实时追踪</h2>
+        <p>数据来源：国家及各地卫健委每日信息发布</p>
+      </div>
+    </div>
     <div class="box-left">
       <div class="box-left-crad">
         <section>
@@ -472,6 +480,35 @@ html {
   html {
     font-size: (100vw / @total-minWidth);
   }
+  .header {
+    background: url(./assets/title.png) 0/100% 100% no-repeat;
+    width: @width;
+    height: 400rem;
+    color: #fff;
+    position: relative;
+    &-title {
+      position: absolute;
+      top: 40rem;
+      left: 40rem;
+      font-size: 35rem;
+      font-weight: bold;
+    }
+    &-center {
+      position: absolute;
+      left: 40rem;
+      bottom: 40rem;
+      h3 {
+        font-size: 45rem;
+        color: rgb(255, 234, 166);
+      }
+      h2 {
+        font-size: 60rem;
+      }
+      p {
+        font-size: 25rem;
+      }
+    }
+  }
   .box {
     display: flex;
     flex-direction: column;
@@ -509,10 +546,13 @@ html {
       }
     }
     &-center {
+      margin: 0 !important;
+      padding: 0 !important;
       width: @width !important;
       height: 75vh !important;
     }
     &-right {
+      margin-bottom: 40rem !important;
       width: @width !important;
       th {
         font-size: 37rem !important;
