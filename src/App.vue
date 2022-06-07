@@ -35,9 +35,13 @@
       </div>
       <div class="box-pie">
         <p class="title">新增确诊前十城市</p>
-        <div class="box-left-pie" style="width: 350px; height: 230px"></div>
+        <div class="chartPie-box" style="width: 100%">
+          <div class="box-left-pie" style="height: 100%"></div>
+        </div>
       </div>
-      <div class="box-left-line" style="width: 350px; height: 185px"></div>
+      <div class="box-line" style="width: 100%">
+        <div class="box-left-line" style="height: 100%"></div>
+      </div>
     </div>
     <div
       id="china"
@@ -74,42 +78,51 @@
 
 <script setup lang="ts">
 import { useStore } from "./stores";
-import { onMounted } from "vue";
+import { onMounted, ref, onUnmounted } from "vue";
 import * as echarts from "echarts"; // 将所有API都导出到一个对象中
 import "./assets/china.js"; // 地图
 import { geoCoordMap } from "./assets/geoMap"; // 经纬度
 import "animate.css";
+import { useWindowSize } from "@vueuse/core";
+import type { ECharts } from "echarts";
 
 const store = useStore();
+const { width } = useWindowSize();
+
+const chartGeo = ref<ECharts>();
+const chartPie = ref<ECharts>();
+const chartLine = ref<ECharts>();
+
+let timer = 0;
+// 调用echart的时候添加防抖
+const resize = () => {
+  clearTimeout(timer);
+  timer = setTimeout(() => {
+    chartGeo.value?.setOption(chartGeo.value.getOption());
+    chartGeo.value?.resize();
+    chartPie.value?.setOption(chartPie.value.getOption());
+    chartPie.value?.resize();
+    chartLine.value?.setOption(chartLine.value.getOption());
+    chartLine.value?.resize();
+  }, 100);
+};
+
 onMounted(async () => {
+  window.addEventListener("resize", resize);
   await store.getList();
   initCharts();
   initPie();
   initLine();
 });
+// 监听视口，在发生变化的时候调用一下echart
+onUnmounted(() => {
+  window.removeEventListener("resize", resize);
+});
 
-// 地图
-const initCharts = () => {
-  // 拿到中国的城市数据
-  const city = store.list.diseaseh5Shelf.areaTree[0].children;
-  // 初始化数据 默认为广东
-  store.item = city[9].children;
-  const data = city.map((v) => {
-    return {
-      name: v.name,
-      value: geoCoordMap[v.name].concat(v.total.nowConfirm), // concat 连接字符串
-      children: v.children,
-      selected: false,
-    };
-  });
-  // 默认选中广东
-  data[9].selected = true;
-  const charts = echarts.init(document.querySelector("#china") as HTMLElement);
-  // 配置项
-  charts.setOption({
-    title: {
-      x: "center",
-    },
+// 地图配置项
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const GeoOptions = (data: any) => {
+  return {
     geo: {
       map: "china",
       aspectScale: 0.8,
@@ -205,7 +218,7 @@ const initCharts = () => {
         label: {
           show: true,
           color: "#000",
-          fontSize: 12,
+          fontSize: width.value > 600 ? 16 : 11,
         },
         emphasis: {
           areaColor: "#56b1da",
@@ -217,20 +230,44 @@ const initCharts = () => {
         data: data,
       },
     ],
+  };
+};
+
+// 地图
+const initCharts = () => {
+  // 拿到中国的城市数据
+  const city = store.list.diseaseh5Shelf.areaTree[0].children;
+  // 初始化数据 默认为广东
+  store.item = city[9].children;
+  const data = city.map((v) => {
+    return {
+      name: v.name,
+      value: geoCoordMap[v.name].concat(v.total.nowConfirm), // concat 连接字符串
+      children: v.children,
+      selected: false,
+    };
   });
+  // 默认选中广东
+  data[9].selected = true;
+  chartGeo.value = echarts.init(
+    document.querySelector("#china") as HTMLElement
+  );
+  // 配置项
+  chartGeo.value.setOption(GeoOptions(data));
 
   // 获取城市统计
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  charts.on("click", (e: any) => {
+  chartGeo.value.on("click", (e: any) => {
     store.item = e.data.children;
   });
 };
+
 // 饼图
 const initPie = () => {
-  const charts = echarts.init(
+  chartPie.value = echarts.init(
     document.querySelector(".box-left-pie") as HTMLElement
   );
-  charts.setOption({
+  chartPie.value.setOption({
     backgroundColor: "#223651",
     tooltip: {
       trigger: "item",
@@ -239,6 +276,7 @@ const initPie = () => {
       {
         type: "pie",
         radius: ["40%", "70%"],
+        layoutSize: "100%",
         itemStyle: {
           borderRadius: 4,
           borderColor: "#fff",
@@ -246,11 +284,13 @@ const initPie = () => {
         },
         label: {
           show: true,
+          fontSize: width.value > 800 && width.value < 992 ? 23 : 12,
+          layoutSize: "100%",
         },
         emphasis: {
           label: {
             show: true,
-            fontSize: "15",
+            fontSize: width.value > 800 && width.value < 992 ? 35 : 20,
           },
         },
         data: store.cityDetaill.map((v) => {
@@ -265,22 +305,23 @@ const initPie = () => {
 };
 // 折线图
 const initLine = () => {
-  const charts = echarts.init(
+  const chart = echarts.init(
     document.querySelector(".box-left-line") as HTMLElement
   );
-  charts.setOption({
+  chart.setOption({
+    backgroundColor: "#223651",
     title: {
       text: "新增确诊前十城市",
       left: "center",
       textStyle: {
         color: "#fff",
         lineHeight: 50,
+        fontSize: width.value > 800 && width.value < 992 ? 25 : 20,
       },
     },
     grid: {
       y2: 35,
     },
-    backgroundColor: "#223651",
     tooltip: {
       trigger: "axis",
     },
@@ -292,9 +333,20 @@ const initLine = () => {
           color: "#fff",
         },
       },
+      axisLabel: {
+        fontSize: width.value > 800 && width.value < 992 ? 23 : 12,
+      },
     },
     yAxis: {
       type: "value",
+      axisLine: {
+        lineStyle: {
+          color: "#fff",
+        },
+      },
+      axisLabel: {
+        fontSize: width.value > 800 && width.value < 992 ? 23 : 12,
+      },
     },
     lable: {
       show: true,
@@ -304,9 +356,13 @@ const initLine = () => {
         data: store.cityDetaill.map((v) => v.local_confirm_add),
         type: "line",
         smooth: true,
+        itemStyle: {
+          normal: { label: { show: true } },
+        },
       },
     ],
   });
+  chartLine.value = chart;
 };
 </script>
 
@@ -318,19 +374,24 @@ const initLine = () => {
 @itemColor: #41b8db;
 @itemBg: #223651;
 @itemBorder: #212028;
+@total-width: 1920px;
 html,
 body,
 #app {
   width: 100vw;
   background-color: #ccc;
 }
-
+html {
+  font-size: (100vw / @total-width);
+}
+.box-left-pie {
+  height: 100%;
+}
 .box {
   display: flex;
-  height: 100%;
-  background-size: cover;
+  justify-content: space-between;
   &-left {
-    width: 350px;
+    width: 440rem;
     color: white;
     &-crad {
       display: grid;
@@ -339,15 +400,16 @@ body,
       section {
         background: @itemBg;
         border: 1px solid @itemBorder;
-        padding: 10px;
+        padding: 10rem;
         display: flex;
         flex-direction: column;
+        justify-content: center;
         align-items: center;
-        font-size: 14px;
+        font-size: 17rem;
         div:nth-child(2) {
           color: @itemColor;
-          padding: 10px 0;
-          font-size: 20px;
+          padding: 10rem 0;
+          font-size: 20rem;
         }
       }
     }
@@ -357,48 +419,58 @@ body,
       justify-content: center;
       align-items: center;
       background-color: @itemBg;
-      width: 350px;
-      height: 280px;
-      margin-top: 15px;
+      height: 330rem;
+      margin-top: 20rem;
       .title {
-        font-size: 18px;
+        font-size: 30rem;
         font-weight: 900;
-        padding: 3px 0;
+        padding: 5rem 0;
+      }
+      .chartPie-box {
+        height: 100%;
       }
     }
-    &-line {
-      margin-top: 15px;
+    .box-line {
+      height: 300rem;
+      margin-top: 20rem;
     }
   }
-
+  &-center {
+    padding: 0 25rem;
+  }
   &-right {
-    width: 380px;
-    margin-right: 13px;
+    width: 420rem;
+    margin-right: 20rem;
     .table {
-      width: 100%;
       color: white;
       background-color: rgba(0, 0, 0, 0.7);
       tr {
         th {
-          padding: 5px;
+          padding: 5rem;
           white-space: nowrap;
           border: 0.5px solid rgba(127, 125, 125, 0.468);
+          font-size: 20rem;
         }
         td {
-          padding: 3px 5px;
+          padding: 3rem 5rem;
           width: 100%;
           white-space: nowrap;
           border: 0.5px solid rgba(127, 125, 125, 0.468);
+          font-size: 20rem;
         }
       }
     }
   }
 }
 
-@media (max-width: 1000px) {
-  @width: 95vw;
+@media (max-width: 992px) {
   * {
     margin-right: 0 !important;
+  }
+  @width: 95vw;
+  @total-minWidth: 992px;
+  html {
+    font-size: (100vw / @total-minWidth);
   }
   .box {
     display: flex;
@@ -409,18 +481,31 @@ body,
       width: @width !important;
       &-crad {
         width: @width !important;
-      }
-      &-line {
-        width: @width !important;
-        height: 30vh !important;
+        section {
+          padding: 20rem 0;
+          font-size: 35rem;
+          div:nth-child(2) {
+            padding: 10rem 0;
+            font-size: 38rem;
+          }
+        }
       }
       .box-pie {
         width: @width !important;
-        height: 32vh !important;
+        height: 450rem !important;
+        .title {
+          font-size: 50rem;
+          padding: 10rem;
+        }
+        .chartPie-box {
+          width: @width !important;
+          height: 400rem !important;
+        }
       }
-      .box-left-pie {
+      .box-line {
         width: @width !important;
-        height: 32vh !important;
+        height: 450rem !important;
+        margin-top: 30rem;
       }
     }
     &-center {
@@ -430,7 +515,12 @@ body,
     }
     &-right {
       width: @width !important;
-      font-size: 4vw;
+      th {
+        font-size: 37rem !important;
+      }
+      td {
+        font-size: 37rem !important;
+      }
     }
   }
 }
