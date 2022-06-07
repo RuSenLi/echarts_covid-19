@@ -114,7 +114,7 @@ const resize = () => {
     chartLine.value?.resize();
   }, 100);
 };
-
+// 监听视口，在发生变化的时候调用一下echart
 onMounted(async () => {
   window.addEventListener("resize", resize);
   await store.getList();
@@ -122,7 +122,6 @@ onMounted(async () => {
   initPie();
   initLine();
 });
-// 监听视口，在发生变化的时候调用一下echart
 onUnmounted(() => {
   window.removeEventListener("resize", resize);
 });
@@ -197,8 +196,8 @@ const GeoOptions = (data: any) => {
       min: 0,
       max: 1000,
       text: ["1000人以上", "0人"],
-      realtime: false,
-      calculable: true,
+      realtime: true,
+      calculable: false, //不提供拖拽
       inRange: {
         color: [
           "rgb(192, 213, 228)",
@@ -554,7 +553,7 @@ html {
     &-right {
       margin-bottom: 40rem !important;
       width: @width !important;
-      table{
+      table {
         border-radius: 15rem !important;
       }
       th {
