@@ -218,7 +218,7 @@ const GeoOptions = (data: any) => {
         label: {
           show: true,
           color: "#000",
-          fontSize: width.value > 600 ? 16 : 11,
+          fontSize: width.value > 700 ? 16 : 9,
         },
         emphasis: {
           areaColor: "#56b1da",
@@ -316,7 +316,7 @@ const initLine = () => {
       textStyle: {
         color: "#fff",
         lineHeight: 50,
-        fontSize: width.value > 800 && width.value < 992 ? 25 : 20,
+        fontSize: width.value > 800 && width.value < 992 ? 35 : 18,
       },
     },
     grid: {
@@ -494,7 +494,7 @@ html {
         width: @width !important;
         height: 450rem !important;
         .title {
-          font-size: 50rem;
+          font-size: 43rem;
           padding: 10rem;
         }
         .chartPie-box {
@@ -511,7 +511,6 @@ html {
     &-center {
       width: @width !important;
       height: 75vh !important;
-      font-size: 10vw !important;
     }
     &-right {
       width: @width !important;
